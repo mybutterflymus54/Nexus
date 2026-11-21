@@ -1,0 +1,154 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NEXUSCREATIONS</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: #101522;
+  color: white;
+  font-family: Arial, sans-serif;
+  display: flex;
+  height: 100vh;
+}
+aside {
+  width: 245px;
+  background: #171f30;
+  padding: 25px;
+}
+.logo { font-size: 21px; font-weight: bold; }
+.logo span { color: #559cff; }
+button {
+  cursor: pointer;
+  border: 0;
+  border-radius: 9px;
+  padding: 12px 18px;
+  background: #347fe5;
+  color: white;
+}
+#new { width: 100%; margin-top: 35px; }
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+header {
+  padding: 20px 25px;
+  border-bottom: 1px solid #293348;
+}
+header p { color: #8d9bb1; font-size: 13px; }
+#chat {
+  flex: 1;
+  overflow-y: auto;
+  padding: 25px;
+}
+.welcome {
+  text-align: center;
+  margin: 130px auto 30px;
+}
+.welcome h1 { font-size: 34px; }
+.welcome p { color: #8d9bb1; }
+.message {
+  max-width: 750px;
+  margin: 12px auto;
+  padding: 15px;
+  border-radius: 10px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.user { background: #263e61; }
+.bot { background: #202b3d; }
+form {
+  display: flex;
+  gap: 10px;
+  padding: 20px;
+  max-width: 850px;
+  width: 100%;
+  margin: auto;
+}
+input {
+  flex: 1;
+  min-width: 0;
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid #35435b;
+  background: #202b3d;
+  color: white;
+}
+footer {
+  text-align: center;
+  color: #718096;
+  font-size: 11px;
+  padding: 12px;
+}
+@media(max-width:600px) {
+  aside { width: 85px; padding: 12px; }
+  .logo { font-size: 13px; overflow-wrap: anywhere; }
+  #new { padding: 8px 3px; font-size: 11px; }
+  .welcome h1 { font-size: 25px; }
+}
+</style>
+</head>
+<body>
+<aside>
+  <div class="logo">NEXUS<span>CREATIONS</span></div>
+  <button id="new">+ New Chat</button>
+</aside>
+<main>
+  <header>
+    <strong>NEXUS AI</strong>
+    <p>Version 5.0 | AI Assistant</p>
+  </header>
+  <section id="chat">
+    <div class="welcome">
+      <h1>Welcome to NEXUS.</h1>
+      <p>Your intelligent AI assistant.</p>
+    </div>
+  </section>
+  <form id="form">
+    <input id="input" placeholder="Message NEXUS..." required>
+    <button type="submit">Send</button>
+  </form>
+  <footer>NEXUS AI can make mistakes. Verify important information.</footer>
+</main>
+<script>
+const chat = document.getElementById("chat");
+const form = document.getElementById("form");
+const input = document.getElementById("input");
+
+function addMessage(text, type) {
+  const div = document.createElement("div");
+  div.className = "message " + type;
+  div.textContent = text;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+form.addEventListener("submit", function(e) {
+  e.preventDefault();
+  const text = input.value.trim();
+  if (!text) return;
+  addMessage(text, "user");
+  input.value = "";
+  addMessage(
+    "NEXUS AI is waiting for its AI backend connection. Coming soon!",
+    "bot"
+  );
+});
+
+document.getElementById("new").addEventListener("click", () => {
+  chat.innerHTML = `
+    <div class="welcome">
+      <h1>Welcome to NEXUS.</h1>
+      <p>Your intelligent AI assistant.</p>
+    </div>`;
+});
+</script>
+</body>
+</html>
