@@ -4,9 +4,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>NEXUSCREATIONS</title>
+<title>NEXUS AI</title>
+
 <style>
 * { box-sizing: border-box; }
+
 body {
   margin: 0;
   background: #101522;
@@ -15,13 +17,20 @@ body {
   display: flex;
   height: 100vh;
 }
+
 aside {
   width: 245px;
   background: #171f30;
   padding: 25px;
 }
-.logo { font-size: 21px; font-weight: bold; }
+
+.logo {
+  font-size: 21px;
+  font-weight: bold;
+}
+
 .logo span { color: #559cff; }
+
 button {
   cursor: pointer;
   border: 0;
@@ -30,29 +39,45 @@ button {
   background: #347fe5;
   color: white;
 }
-#new { width: 100%; margin-top: 35px; }
+
+button:disabled { opacity: 0.5; }
+
+#new {
+  width: 100%;
+  margin-top: 35px;
+}
+
 main {
   flex: 1;
   display: flex;
   flex-direction: column;
   min-width: 0;
 }
+
 header {
   padding: 20px 25px;
   border-bottom: 1px solid #293348;
 }
-header p { color: #8d9bb1; font-size: 13px; }
+
+header p {
+  color: #8d9bb1;
+  font-size: 13px;
+}
+
 #chat {
   flex: 1;
   overflow-y: auto;
   padding: 25px;
 }
+
 .welcome {
   text-align: center;
   margin: 130px auto 30px;
 }
+
 .welcome h1 { font-size: 34px; }
 .welcome p { color: #8d9bb1; }
+
 .message {
   max-width: 750px;
   margin: 12px auto;
@@ -62,8 +87,10 @@ header p { color: #8d9bb1; font-size: 13px; }
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
+
 .user { background: #263e61; }
 .bot { background: #202b3d; }
+
 form {
   display: flex;
   gap: 10px;
@@ -72,6 +99,7 @@ form {
   width: 100%;
   margin: auto;
 }
+
 input {
   flex: 1;
   min-width: 0;
@@ -81,12 +109,14 @@ input {
   background: #202b3d;
   color: white;
 }
+
 footer {
   text-align: center;
   color: #718096;
   font-size: 11px;
   padding: 12px;
 }
+
 @media(max-width:600px) {
   aside { width: 85px; padding: 12px; }
   .logo { font-size: 13px; overflow-wrap: anywhere; }
@@ -95,28 +125,35 @@ footer {
 }
 </style>
 </head>
+
 <body>
+
 <aside>
   <div class="logo">NEXUS<span>CREATIONS</span></div>
   <button id="new">+ New Chat</button>
 </aside>
+
 <main>
   <header>
     <strong>NEXUS AI</strong>
     <p>Version 5.0 | AI Assistant</p>
   </header>
+
   <section id="chat">
     <div class="welcome">
       <h1>Welcome to NEXUS.</h1>
       <p>Your intelligent AI assistant.</p>
     </div>
   </section>
+
   <form id="form">
     <input id="input" placeholder="Message NEXUS..." required>
     <button type="submit">Send</button>
   </form>
+
   <footer>NEXUS AI can make mistakes. Verify important information.</footer>
 </main>
+
 <script>
 const chat = document.getElementById("chat");
 const form = document.getElementById("form");
@@ -130,16 +167,52 @@ function addMessage(text, type) {
   chat.scrollTop = chat.scrollHeight;
 }
 
-form.addEventListener("submit", function(e) {
+form.addEventListener("submit", async function(e) {
   e.preventDefault();
+
   const text = input.value.trim();
   if (!text) return;
+
   addMessage(text, "user");
   input.value = "";
-  addMessage(
-    "NEXUS AI is waiting for its AI backend connection. Coming soon!",
-    "bot"
-  );
+
+  const button = form.querySelector("button");
+  button.disabled = true;
+
+  const waiting = document.createElement("div");
+  waiting.className = "message bot";
+  waiting.textContent = "NEXUS is thinking...";
+  chat.appendChild(waiting);
+
+  try {
+    const response = await fetch(
+      "http://127.0.0.1:5000/chat",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ message: text })
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Server error");
+    }
+
+    waiting.textContent = data.response;
+
+  } catch (error) {
+    waiting.textContent =
+      "Could not connect to NEXUS. Check Python and Ollama.";
+    console.error(error);
+
+  } finally {
+    button.disabled = false;
+    input.focus();
+  }
 });
 
 document.getElementById("new").addEventListener("click", () => {
@@ -150,5 +223,6 @@ document.getElementById("new").addEventListener("click", () => {
     </div>`;
 });
 </script>
+
 </body>
 </html>
